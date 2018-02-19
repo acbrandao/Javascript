@@ -1,31 +1,45 @@
-# php Genetic Algorithm Sample code
-Example of code expalined here  http://www.abrandao.com/2015/01/simple-php-genetic-algorithm/
+# Javascript+ PHP currency converter script  
+Code Sample:using and  PHP Javascript  to do an on-age Currency converter + exchange rates caching RSS feed :
+Example of code expalined here www.abrandao.com/2013/04/php-currency-converter-exchange-rates/
 
 ## Installation
-Simply clone  or download the few files that make this PHP Genetic algorith.  PHP files are based on PHP Classes with each class representing a portion of the genetic algorith code. The classes are broekn out as folllows :
+Simply clone  or download the  files that into your web server folder such as `var/www/html/`. 
+Be sure PHP is setup and running. 
 
- * **algorithm.php** Main class this controls and orchestrates the setup and configuration of the GA
- * **fitnessCalc.php**  class has the fittness calculation logic to determine which individuals are "fit"
- * **indiviudal.php**  class has the code for for setting up an individual composed of chromosones
- * **population.php**  class has the code for for managaing groups of  individuals
+  ''Note'' Your webserver must be connected to the Internet to retrieve rates.
+ 
+Change the permissions of the file cached_rates.xml so the script can write and update this file
+``chmod 755 cached_rates.xml` 
 
-The other files are for providing an interfaces for the GA code to be run.
-The other files are the ones that allow you to view the genetc algorthim with some sort of interface. Two types provided a web version..
- **ga_sse_demo.html**  : PRovides the web page to view a simple string interface
- **ga_sse_server.php** : Runs the GA algortihm on the server and sends via Server Side events results to ga_See_demo.html
+Adjust the array of currency types t match the ones your ineterested in ..
 
- ga.php Provides command line running of genetic algortihm
+`// Currency names that we'll use later on
+public $names = array (
+'USD' => "US Dollar",
+'JPY' => "Japanese Yen",
+'GBP' => "Pound Sterling",
+'CAD' => "Canadian Dollar",
+'HKD' => "Hong Kong Dollar",
+'CNY' => "Chinese yuan renminbi",
+'INR' => "Indian Rupee",
+'AUD' => "Australian Dollar",
+'SGD' => "Singapore Dollar",
+'EUR' => "European Euro"
+); //end of array`
 
+
+This script by default uses USD to <currency> conversions if you want the base currency to be  different change the default 
+	`return exchange_rate_convert("USD",$currency,1);` 
+to mactch 
 
 ## Usage
 
  Install all the above on a folder on your PHP supported web server.
  Simply visit the URL containing the example code  calling the example Server Side events demo such as :
-http://www.abrandao.com/lab/ga/ga_sse_demo.html
 
-To run from the command line, simple issue the follow from a system that has PHP installed and runs from the shell. 
-`php ga.php`
+http://www.your_website.com/currency_calc/index.php
 
+''Note'' Your webserver must be connected to the Internet to retrieve rates.
 
 ## Contributing
 1. Fork it!
@@ -39,4 +53,3 @@ TODO: Write history
 TODO: Write credits
 ## License
 TODO: Write license
-
