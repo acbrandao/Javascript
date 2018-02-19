@@ -1,5 +1,7 @@
 # Javascript+ PHP currency converter script  
 Code Sample:using and  PHP Javascript  to do an on-age Currency converter + exchange rates caching RSS feed :
+
+
 Example of code expalined here www.abrandao.com/2013/04/php-currency-converter-exchange-rates/
 
 ## Installation
