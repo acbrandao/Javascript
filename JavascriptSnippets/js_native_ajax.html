@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>The HTML5 Page</title>
+  <meta name="description" content="The HTML5 Page">
+  <meta name="author" content="www.abrandao.com">
+</head>
+<body>
+  <h1> JAvascript Native Ajax CAll  </h1>
+ <p> Lets make an JAvascirpt AJAX call  </p>
+  <div id="myDiv"> </div>
+
+<script type="text/javascript">
+function ajaxRequest() {
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
+           if (xmlhttp.status == 200) {
+               document.getElementById("myDiv").innerHTML = xmlhttp.responseText;
+           }
+           else if (xmlhttp.status == 400) {
+              alert('There was an error 400');
+           }
+           else {
+               alert('something else other than 200 was returned');
+           }
+        }
+    };
+
+    xmlhttp.open("GET", "script.php", true);
+    xmlhttp.send();
+}
+
+ ajaxRequest();
+</script>
+</body>
+</html>

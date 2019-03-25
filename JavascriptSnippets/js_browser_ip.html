@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>The HTML5 Page</title>
+  <meta name="description" content="The HTML5 Page">
+  <meta name="author" content="www.abrandao.com">
+</head>
+<body>
+  <h1> Jquery Client side IP check </h1>
+ <p> Lets use http://jsonip.com/ to see WHAT IP you're coming from </p>
+  <div id="myIP"> </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<script >
+$(document).ready(function () {
+$.getJSON("http://jsonip.com/?callback=?", function (data) {
+console.log("Your Browser IP: "+data);
+$("#myIP").text(data.ip);
+//alert(data.ip);
+});
+});
+
+</script >
+</body>
+</html>

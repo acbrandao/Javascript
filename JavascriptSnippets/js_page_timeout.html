@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>The HTML5 Page</title>
+  <meta name="description" content="The HTML5 Page">
+  <meta name="author" content="www.abrandao.com">
+</head>
+<body>
+  <h1> Javascript Page timeout </h1>
+ 
+ To set the time out press this button <button onclick="setTimeout()"> SetTime out </button>
+  
+ <script>
+
+function promptMe()
+{
+return confirm("Are you still on this page?");
+}
+
+function setTimeout()
+{
+setInterval( promptMe() , 5000);  //displays an alert dialog every 3 seonds
+}
+</script>
+</body>
+</html>

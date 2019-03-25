@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>The HTML5 Page</title>
+  <meta name="description" content="The HTML5 Page">
+  <meta name="author" content="www.abrandao.com">
+</head>
+<body>
+<h1>Disable Image Right Click</h1>
+<p>Try to right-mouse click on the image below and you should not see a way to SAVE image </p>
+<img src="image.png" id="imgId" height=360 width=640>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script >
+$('#imgId').bind('contextmenu', function(e) {
+    return false;
+}); 
+</script>
+
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>The HTML5 Page</title>
+  <meta name="description" content="The HTML5 Page">
+  <meta name="author" content="abrandao.com">
+</head>
+<body>
+	<h2> HTML 5 Feature Test </h2>
+
+	<ul>
+		<li> Supports Websockets : <script> featureExists("WebSocket"); </script>
+		<li> Supports GeoLocation  : <script> featureExists("GeoLocation"); </script>
+		<li> Supports Canvas  : <script> featureExists("Canvas"); </script>
+		<li> Supports EventSource : <script> featureExists("EventSource"); </script>	
+	</ul>
+
+<script language="javascript">
+
+function featureExists(featureName)
+{
+
+switch(featureName) {
+  case "WebSocket":
+		if ("WebSocket" in window)
+		{
+		document.write(" WebSockets supported!<. Your browser can do websockets ");
+		}
+		else
+		{
+		document.write("Error: No Websockets supported. Your Browser DOES NOT support websockets. Upgrade to modern browser");
+		}
+    break;
+
+case "GeoLocation":
+    if ( !!navigator.geolocation) { 
+    document.write(featureName + "  supported! ");
+	}
+	else
+	 document.write(featureName + "  NOT supported!");
+    break;
+
+case "Canvas":
+	if (!!document.createElement('canvas').getContext ) { 
+    document.write(featureName + "  supported! ");
+	}
+	else
+	 document.write(featureName + "  NOT supported!");
+    break;
+
+case "EventSource":
+    if(typeof(EventSource) !== "undefined")  { 
+    document.write(featureName + "  supported! ");
+	}
+	else
+	 document.write(featureName + "  NOT supported!");
+    break;
+    
+case "WebSocket":
+    // code block
+    break;      
+case "WebSocket":
+    // code block
+    break;
+
+  default:
+    // code block
+}
+
+}
+ 
+
+</script>
+
+ </body>
+</html>

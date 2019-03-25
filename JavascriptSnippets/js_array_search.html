@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>The HTML5 Page</title>
+  <meta name="description" content="The HTML5 Page">
+  <meta name="author" content="www.abrandao.com">
+</head>
+<body>
+  <h1> Javascript Array Search</h1>
+<p> Seaches for na item in an Array </p>
+  
+<script>
+
+var arr = [
+     { name:"xps13", value:"this", other: "that" },
+    { name:"hplatitude", value:"this", other: "that" }
+];
+
+var obj = {
+  name: "xps13",
+  value: "this",
+  age: 50,
+  other: "blue"
+};
+// As of ECMAScript 2016 you can use includes()
+// Searches for an object in an array
+arr.includes(obj);  //search for an object in an array
+
+// an approach for older browsers - before ECMAScript 2016.
+function include(arr,obj) {
+    return (arr.indexOf(obj) != -1);
+}
+
+// Searches an array for aspecific value (string)
+function search(needle, myArray){
+    for (var i=0; i < myArray.length; i++) {
+        if (myArray[i].name === needle) {
+            return myArray[i];
+        }
+    }
+}
+
+var array = [
+    { name:"xps13", value:"this", other: "that" },
+    { name:"hplatitude", value:"this", other: "that" }
+];
+
+
+var searchTerm="xps13";
+document.writeln("Searching for "+searchTerm)
+var resultObject = search(searchTerm, array);
+
+document.writeln("REsult "+resultObject)
+
+
+
+
+</script>
+</body>
+</html>
