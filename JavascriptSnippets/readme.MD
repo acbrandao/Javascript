@@ -28,7 +28,7 @@ For snippets that make use of Jquery I have included a CDN like to jquery as suc
 | 3  | js_form_clear.html  | clear the contact form example |
 | 4  | js_time_duration.html  | calculate time in terms of hh:mm:ss in duration from milliseconds |
 | 5  | js_pagE_timeout.html  |  Javascript page timeout after n seconds |
-| 6  | js_form_prevent_submit.html  | Prevent multiple form submissions  |
+| 6  | js_save_load_form.html  | Example of Saving and Restoring a Form's data |
 | 7  | js_disable_right_click  | prevent right-click on an image  |
 | 8  | js_browser_ip.html  | Jquery client side browser IP address check |
 | 9  | js_feature_test.html  |  |
