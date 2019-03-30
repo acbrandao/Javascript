@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>The HTML5 Save/Load Data</title>
+  <meta name="description" content="The HTML5 Page">
+  <meta name="author" content="www.abrandao.com">
+</head>
+<body>
+<h1>Form Save and reLoad forms values LocalStorage </h1>
+<p>
+  A common usage of larger forms is to SAVE their values,
+   in case the user re-freshes the page, presses the back button, or
+   just looses connection. Nothing is more frustrating on-line than, filling out a long
+   complex form, only to have a server error and then have to re-do it again.
+   <hr>
+   The simple form below uses JQuery to loop through the form and save the values to LocalStorage (User's browser)
+   Then on re-visits to the page, it reloads those values from LocalStorage. Also an Jquery I use an event to 
+   bind to the onKeyUp / onChange input so whenever a user changes the form is automaticcaly saved
+</p>
+<div class="container">  
+  <form id="myformID" action="#" method="post" class="form-control">
+    <fieldset>
+      <input placeholder="Your name" id="name" type="text" tabindex="1" required autofocus>
+    </fieldset>
+    <fieldset>
+      <input placeholder="Your Email Address" id="email" type="email" tabindex="2" required>
+    </fieldset>
+    <fieldset>
+      <input placeholder="Your Phone Number" type="tel" id="tel" tabindex="3" required>
+    </fieldset>
+    <fieldset>
+      <input placeholder="Your Web Site starts with http://" id="url" type="url" tabindex="4" required>
+    </fieldset>
+    <fieldset>
+      <textarea placeholder="Type your Message Here...." id="message" tabindex="5" required></textarea>
+    </fieldset>
+    <fieldset>
+      <button name="submit" type="submit" id="contact-submit" data-submit="...Sending">Submit</button>
+    </fieldset>
+     <fieldset>
+      <button name="reset" type="reset" >Reset</button>
+    </fieldset>
+  </form>
+ 
+  
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<script language="javascript">
+
+  /** reloadSaved()  reloads saved form data if any exists */
+function reloadSaved() {
+
+$.each( $('form input'), function() {
+    input_name = $(this).attr('id');
+    if (localStorage[input_name])
+     {
+    $(this).val(localStorage[input_name]);
+    console.log("Restoring: "+input_name +" with "+localStorage[input_name]  ) ;
+    }
+});
+
+ 
+  }
+ 
+/** SaveForm()  saves ALL form data into LocalStorage */
+function SaveForm() {
+
+$.each( $('#myformID :input'), function() {
+  input_name = $(this).attr('id');
+    localStorage[input_name ] = $(this).val();
+    console.log("Saving: "+input_name +" = "+ $(this).val() ) ;
+    
+});
+
+  }
+
+$(document).ready(function(){
+  reloadSaved(); //re-load any saved data
+
+// Bind all CLASS form-control changes to trigger Saveform
+$('.form-control').bind("change", function(){
+  SaveForm();   //Save the form
+});
+
+});
+</script>
+
+
+</body>
+</html>
