@@ -31,8 +31,7 @@ For snippets that make use of Jquery I have included a CDN like to jquery as suc
 | 6  | js_save_load_form.html  | Example of Saving and Restoring a Form's data |
 | 7  | js_disable_right_click  | prevent right-click on an image  |
 | 8  | js_browser_ip.html  | Jquery client side browser IP address check |
-| 9  | js_feature_test.html  |  |
-| 10  | js_feature_test.html  |   |
+
 
 
 ## Contributing
