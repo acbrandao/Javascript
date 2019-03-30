@@ -1,5 +1,5 @@
 # Javascript Snippets 
-A short (10) list of commonly used javascript code examples   http://www.abrandao.com/2015/01/simple-php-genetic-algorithm/
+A short (10) list of commonly used javascript code examples   http://www.abrandao.com/2019/03/top-10-most-useful-jquery-javascript-code-snippets/
 
 
 ## Installation
