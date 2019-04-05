@@ -23,12 +23,12 @@
 <div class="container">
   <div class="card-deck mb-3 text-center">
  <!----- Next Card --->
-    <div class="card mb-4 shadow-sm">
+    <div class="card mb-4 shadow-sm"> 
       <div class="card-header">
         <h4 class="my-0 font-weight-normal" id="stock01_name">{Name}</h4>
       </div>
       <div class="card-body">
-        <h1 class="card-title pricing-card-title" > $<span id="stock01_price"> ...</span> <small class="text-muted">/ share</small></h1>
+        <h1 class="card-title pricing-card-title" > $<span id="stock01_price"> ...</span> <small class="text-muted">/ share</small>  <img src="svg/caret-top.svg" alt="Sym" id="symbol" width="32px" >  </h1>
         <ul class="list-unstyled mt-3 mb-4">
           <li>updated: <span id="stock01_time"> </span> </li>
           <li>Source: NASDAQ</li>
@@ -88,6 +88,16 @@ eSource.addEventListener('message', function(e) {
     $("#stock01_price").text(stockObj.ask);
      $("#stock01_time").text(stockObj.time);
 
+     //change the Up/DOwn symbol
+     if (stockObj.ask > last_price)
+     {
+     	$("#symbol").attr('src', "svg/caret-top.svg");
+     $('#symbol').css('color', 'green');
+ 	}
+ 	 else
+ 	 $("#symbol").attr('src', "svg/caret-bottom.svg");
+  
+
   //just for frills, create a little motion on the price change.
 	$('#stock01_price').animateNumber(
 	{
@@ -95,6 +105,8 @@ eSource.addEventListener('message', function(e) {
 		numberStep: comma_separator_number_step
 	}
 	);
+
+	last_price=stockObj.ask;
 
 }, false);
 
