@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Server-Sent Events Demo Page</title>
+  <meta name="description" content="Server-Sent Events Demo Page">
+  <meta name="author" content="abrandao.com">
+  <!-- link rel="stylesheet" href="css/styles.css?v=1.0" -->
+</head>
+<body>
+<h1> Server Sent Events - basic demo </h1>
+<ul>
+<li>URL   :<strong> <span id="url"></span>  </strong>
+<li>Status:<strong> <span id="status"> </span> </strong>
+<li>Message:<strong> <span id="message"> </span> </strong>
+<li> Auto re-connect every 3 seconds ..
+</ul>
+
+<script>
+var eSource;  //define my global eventSource Object
+
+if (!!window.EventSource)  //Check for Browser feature compatibiliity
+ {
+  var eSource= new EventSource('sserver_basic.php');  //instantiate the Event source
+document.getElementById('url').innerHTML=eSource.url;
+
+} else {
+  alert("You're browser DOES NOT SUPPORT EventSource needed for this page. Try a newer browser like Chrome, FireFox, Apple ");
+  // Fallback method perhaps you can use old-school XHR polling
+}
+
+//Now bind various Events , Message, and Error to this event
+eSource.addEventListener('open', function(e) {
+  console.log("Connection was opened.");
+  document.getElementById('status').innerHTML="Connection opened";
+}, false);
+
+
+eSource.addEventListener('message', function(e) {
+  document.getElementById('message').innerHTML=e.data;
+
+}, false);
+
+
+eSource.addEventListener('error', function(e) {
+  if (e.readyState == EventSource.CLOSED) { 
+    console.log("Connection was closed. ");
+document.getElementById('status').innerHTML="Connection CLOSED";
+  }
+}, false);
+</script>
+</body>
+</html>
