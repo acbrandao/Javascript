@@ -16,8 +16,8 @@
 </head>
 <body >
  <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-  <h1 class="display-4">ABRANDAO.COM SSE Stock Ticker Demo</h1>
-  <p class="lead">Simulated Stock Tickers Feeds from SErver Side Events</p>
+  <h1 class="display-4">Stock Demo</h1>
+  <p class="lead">ABRANDAO.COM  Simulated Stock Data using Server Sent Events</p>
 </div>
 
 <div class="container">
@@ -78,7 +78,7 @@ eSource.addEventListener('open', function(e) {
   console.log("Connection was opened.")
 }, false);
 
-
+// all the magic happens here, we get the JSON And then we populate the page
 eSource.addEventListener('message', function(e) {
    var stockObj = JSON.parse(e.data);   //turning the JSON data message back to JSON variable
   console.log(stockObj); 
@@ -88,13 +88,13 @@ eSource.addEventListener('message', function(e) {
     $("#stock01_price").text(stockObj.ask);
      $("#stock01_time").text(stockObj.time);
 
-
-$('#stock01_price').animateNumber(
-  {
-    number: stockObj.ask,
-    numberStep: comma_separator_number_step
-  }
-);
+  //just for frills, create a little motion on the price change.
+	$('#stock01_price').animateNumber(
+	{
+		number: stockObj.ask,
+		numberStep: comma_separator_number_step
+	}
+	);
 
 }, false);
 
