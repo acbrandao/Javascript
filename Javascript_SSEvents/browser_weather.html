@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SSE Weather Demo</title>
+  <meta name="description" content="SSE Stock Ticker using Bootstrap, Jquery Template">
+  <meta name="author" content="www.abrandao.com">
+   <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+
+ <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+<style>
+h1.card-title { font-size: 1.5rem; }
+</style>
+ 
+</head>
+<body >
+ <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+  <h1 class="display-4">Weather Demo</h1>
+  <p class="lead">ABRANDAO.COM  Live weather using APIXU</p>
+</div>
+
+<div class="container">
+   	<div class="card-columns  text-center" id="weather_cards">
+ <!----- Cards Dynically added here --->
+   
+</div>
+</div>
+
+
+ <!------------------------------ SUPPORTING SCRIPTIING --------------------------- -->  
+ <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+   <script
+  src="https://code.jquery.com/jquery-2.0.3.min.js"
+  integrity="sha256-sTy1mJ4I/LAjFCCdEB4RAvPSmRCb3CU7YqodohyeOLo="
+  crossorigin="anonymous"></script>
+
+  <!-- reuires OLDER version of Jquery 2.0.3 because of animate number -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+   <!-- Jquery Plugin AnimateNumber to make the Stock Ticker animation https://github.com/aishek/jquery-animateNumber -->
+    <script src="js/jquery.animateNumber.js"> </script> 
+
+
+<script>
+var eSource;  //define my global eventSource Object
+var last_price; //used for animation purposes
+var comma_separator_number_step = $.animateNumber.numberStepFactories.separator(',')
+
+if (!!window.EventSource)  //Check for Browser feature compatibiliity
+ {
+  var eSource= new EventSource('sserver_weather.php');  //instantiate the Event source
+} else {
+  alert("You're browser DOES NOT SUPPORT EventSource needed for this page. Try a newer browser like Chrome, FireFox, Apple ");
+  // Fallback method perhaps you can use old-school XHR polling
+}
+
+//Now bind various Events , Message, and Error to this event
+eSource.addEventListener('open', function(e) {
+  console.log("Connection was opened.")
+}, false);
+
+// all the magic happens here, we get the JSON And then we populate the page
+eSource.addEventListener('message', function(e) {
+   var weatherObj = JSON.parse(e.data);   //turning the JSON data message back to JSON variable
+  console.log(weatherObj); 
+
+ //Now lets loop and create the CITY weather Cards
+   var city_card="<div class='card  shadow-sm' > <div class='card-header'>   <h4 class='my-0 font-weight-normal' id='stock01_name'>{CITY_NAME}</h4> </div><div class='card-body'>   <h1 class='card-title' > {WEATHER_CONDITION}  <small class='text-muted'>{WEATHER_TEMP}  &#176; F</small> </h1>  {WEATHER_ICON}   <ul class='list-unstyled mt-3 mb-3'>   <li>Local Time: {TIME_UPDATED} </span> </li>   <li>Wind: {WIND_MPH} mph</li>  </ul> </div>  </div> ";
+
+var html_cards='';
+for(var i = 0; i < weatherObj.length; i++) {
+    var obj = weatherObj[i];
+     
+    this_city_card=city_card;
+    console.log(obj.location.name);
+    console.log(obj.current.temp_f);
+    console.log(obj.current.last_updated);
+    console.log(obj.current["condition"].text);
+    console.log(obj.current["condition"].icon);
+
+//Replace City card {PLACEHOLDERS} with real data
+this_city_card = this_city_card.replace("{CITY_NAME}", obj.location.name );
+this_city_card = this_city_card.replace("{WEATHER_CONDITION}", obj.current["condition"].text );
+this_city_card = this_city_card.replace("{WEATHER_ICON}", "<img src='http://"+obj.current["condition"].icon+"'>" );
+this_city_card = this_city_card.replace("{WEATHER_TEMP}",obj.current.temp_f);
+this_city_card = this_city_card.replace("{WIND_MPH}",obj.current.wind_mph);
+this_city_card = this_city_card.replace("{TIME_UPDATED}",obj.location.localtime);
+
+	   html_cards+=this_city_card+"\n";
+}
+
+ $("#weather_cards").html(html_cards);
+
+  }, false);
+
+
+eSource.addEventListener('error', function(e) {
+  if (e.readyState == EventSource.CLOSED) { 
+    console.log("Connection was closed. ");
+  }
+}, false);
+
+
+function notify(msg)
+{
+  $("html, body").animate({scrollTop: 0}, 1000);
+  $("#msg").text(msg);
+  console.log(msg);
+}
+
+
+ 
+/** Start of JQuery document.load function */
+$( document ).ready(function() {
+
+});
+
+</script>
+
+</body>
+</html>
