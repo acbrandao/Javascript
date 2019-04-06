@@ -1,5 +1,5 @@
 # Javascript HTML5 Server Sent Events SSE (EventSource) tutorial 
-This is an  easy to follow tutorial will show you how to use EventSource  stream server data  (sometimes called SSE’s, Server Sent Events) , in real-time to your browser. Using  Javascript’s EventSource API  interface we can seamlessly update and display on a web page real-time  server-sent data.
+![Server SEnt Events](http://www.abrandao.com/wp-content/uploads/2019/04/sse_weather_page-300x176.png)  This is an  easy to follow tutorial will show you how to use EventSource  stream server data  (sometimes called SSE’s, Server Sent Events) , in real-time to your browser. Using  Javascript’s EventSource API  interface we can seamlessly update and display on a web page real-time  server-sent data.
 
 Demo Code tutorial explained  here http://www.abrandao.com/2019/04/html5-eventsource-server-sent-events-tutorial/
 
