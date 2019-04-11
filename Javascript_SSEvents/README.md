@@ -8,7 +8,8 @@ Demo Code tutorial explained  here http://www.abrandao.com/2019/04/html5-eventso
 
  * Basic Event Source Demo: http://abrandao.com/lab/Javascript/Javascript_SSEvents/browser_basic.html
  * Fancier Stock Tiker Feed Demo:  http://abrandao.com/lab/Javascript/Javascript_SSEvents/browser_stocks.html
- * Weather APIXU Feed Demo:  http://abrandao.com/lab/Javascript/Javascript_SSEvents/browser_stocks.html
+ * Weather APIXU Feed Demo:  http://abrandao.com/lab/Javascript/Javascript_SSEvents/browser_weather.html
+ * System CPu/RAM/DISK Feed Demo:  http://abrandao.com/lab/Javascript/Javascript_SSEvents/browser_cpu.html
  (Note stock data is SIMULATED.. not real)
 
 ## Installation
