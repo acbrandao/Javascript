@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SSE System CPU Demo</title>
+  <meta name="description" content="SSE Stock Ticker using Bootstrap, Jquery Template">
+  <meta name="author" content="www.abrandao.com">
+   <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+
+ <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<!-- Font Awesome Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+ 
+</head>
+<body >
+
+<div class="container-fluid text-center">
+<div class="row">
+ <div class=" px-3 py-3 mx-auto text-center	">
+  <h1 class="display-6">System CPU/RAM /DISK Demo</h1>
+  <p class="lead">ABRANDAO.COM Host CPU/RAM/DISK status Demo</p>
+</div>
+</div>
+
+<div class="row">
+  <div class="card-columns text-center">
+ <!----- Next Card --->
+   	<div  id="cpu_cards">	 </div>
+   <!----- Next Card --->
+</div>
+</div>
+
+</div>
+
+
+ <!------------------------------ SUPPORTING SCRIPTIING --------------------------- -->  
+ <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+   <script
+  src="https://code.jquery.com/jquery-2.0.3.min.js"
+  integrity="sha256-sTy1mJ4I/LAjFCCdEB4RAvPSmRCb3CU7YqodohyeOLo="
+  crossorigin="anonymous"></script>
+
+  <!-- reuires OLDER version of Jquery 2.0.3 because of animate number -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+   <!-- Jquery Plugin AnimateNumber to make the Stock Ticker animation https://github.com/aishek/jquery-animateNumber -->
+    <script src="js/jquery.animateNumber.js"> </script> 
+
+
+<script>
+var eSource;  //define my global eventSource Object
+var last_price; //used for animation purposes
+var comma_separator_number_step = $.animateNumber.numberStepFactories.separator(',')
+
+if (!!window.EventSource)  //Check for Browser feature compatibiliity
+ {
+  var eSource= new EventSource('sserver_cpu.php');  //instantiate the Event source
+} else {
+  alert("You're browser DOES NOT SUPPORT EventSource needed for this page. Try a newer browser like Chrome, FireFox, Apple ");
+  // Fallback method perhaps you can use old-school XHR polling
+}
+
+//Now bind various Events , Message, and Error to this event
+eSource.addEventListener('open', function(e) {
+  console.log("Connection was opened.")
+}, false);
+
+
+if (!!window.EventSource)  //Check for Browser feature compatibiliity
+ {
+  var eSource= new EventSource('sserver_cpu.php');  //instantiate the Event source
+} else {
+  alert("You're browser DOES NOT SUPPORT EventSource needed for this page. Try a newer browser like Chrome, FireFox, Apple ");
+  // Fallback method perhaps you can use old-school XHR polling
+}
+
+//Now bind various Events , Message, and Error to this event
+eSource.addEventListener('open', function(e) {
+  console.log("Connection was opened.")
+}, false);
+
+// all the magic happens here, we get the JSON And then we populate the page
+eSource.addEventListener('message', function(e) {
+   var SystemObj = JSON.parse(e.data);   //turning the JSON data message back to JSON variable
+  console.log(SystemObj); 
+
+ //Now lets loop and create the CITY weather Cards
+   var metric_card="<div class='card  mb-4 shadow-sm' > <div class='card-header'>   <h3 class='my-0 font-weight-normal' id='name'>{METRIC_NAME}</h3> </div><div class='card-body'>   <h1 class='card-title' >  <i class='{METRIC_ICON}' style='font-size:36px;'> {METRIC_VALUE}  </i> </h1>   <ul class='list-unstyled mt-3 mb-3'>   <li>Local Time:  {METRIC_TIME}  </span> </li>  </ul> </div>  </div> ";
+
+var html_cards='';
+for(var i = 0; i < SystemObj.length; i++) {
+    var obj = SystemObj[i];
+     
+    this_metric_card=metric_card;
+    console.log(obj.name);
+    console.log(obj.value);
+    console.log(obj.time);
+    console.log(obj.icon);
+
+//Replace System card {PLACEHOLDERS} with real data
+this_metric_card = this_metric_card.replace("{METRIC_NAME}", obj.name );
+this_metric_card = this_metric_card.replace("{METRIC_VALUE}", obj.value );
+this_metric_card = this_metric_card.replace("{METRIC_TIME}",obj.time);
+this_metric_card = this_metric_card.replace("{METRIC_ICON}",obj.icon);
+
+html_cards+=this_metric_card+"\n";
+}
+
+ $("#cpu_cards").html(html_cards);
+
+  }, false);
+
+
+
+eSource.addEventListener('error', function(e) {
+  if (e.readyState == EventSource.CLOSED) { 
+    console.log("Connection was closed. ");
+  }
+}, false);
+
+
+
+</script>
+
+</body>
+</html>
