@@ -46,26 +46,16 @@ function GetSysteInfo()
 
 
 	//SSE count
+	$count = (int)file_get_contents('counter.txt');
+	$count++;
+	file_put_contents("counter.txt",$count);
+
 	$size=filesize('counter.txt') ;  //Just a file that keeps an incrment counter
-	$fp = fopen("counter.txt", "r+");
 
-	while(!flock($fp, LOCK_EX)) {  // acquire an exclusive lock
-	// waiting to lock the file
-	}
-
-	$counter = intval(fread($fp, filesize("counter.txt")));
-	$counter++;
-
-	ftruncate($fp, 0);      // truncate file
-	fwrite($fp, $counter);  // set your data
-	fflush($fp);            // flush output before releasing the lock
-	flock($fp, LOCK_UN);    // release the lock
-
-	fclose($fp);
     
-	$sysinfo.="{ \"name\": \"SSE_COUNT\", \"value\": \"$counter\" , \"time\": \" $time\" , \"icon\": \"fa fa-hdd-o\" },  " ;
+	$sysinfo.="{ \"name\": \"SSE_COUNT\", \"value\": \"$count\" , \"time\": \" $time\" , \"icon\": \"fa fa-plus-circle\" },  " ;
 
-	$sysinfo.="{ \"name\": \"COUNT_SIZE\", \"value\": \"$size b\" , \"time\": \" $time\" , \"icon\": \"fa fa-hdd-o\" }  " ;
+	$sysinfo.="{ \"name\": \"COUNT_SIZE\", \"value\": \"$size b\" , \"time\": \" $time\" , \"icon\": \"fa fa-refresh\" }  " ;
 
 	//Aapche Log File REGEX: /^(\S+) (\S+) (\S+) \[([^:]+):(\d+:\d+:\d+) ([^\]]+)\] \"(\S+) (.*?) (\S+)\" (\S+) (\S+) "([^"]*)" "([^"]*)"$/
 
