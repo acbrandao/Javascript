@@ -91,7 +91,7 @@ eSource.addEventListener('message', function(e) {
   console.log(SystemObj); 
 
  //Now lets loop and create the CITY weather Cards
-   var metric_card="<div class='card  mb-4 shadow-sm' > <div class='card-header'>   <h3 class='my-0 font-weight-normal' id='name'>{METRIC_NAME}</h3> </div><div class='card-body'>   <h1 class='card-title' >  <i class='{METRIC_ICON}' style='font-size:36px;'> {METRIC_VALUE}  </i> </h1>   <ul class='list-unstyled mt-3 mb-3'>   <li>Local Time:  {METRIC_TIME}  </span> </li>  </ul> </div>  </div> ";
+   var metric_card="<div class='card  mb-4 shadow-sm' > <div class='card-header'>   <h3 class='my-0 font-weight-normal' id='name'>{METRIC_NAME}</h3> </div><div class='card-body'>   <h1 class='card-title' >  <i class='{METRIC_ICON}' style='font-size:36px;'> <span id='val1'> {METRIC_VALUE} </span> </i> </h1>   <ul class='list-unstyled mt-3 mb-3'>   <li>Local Time:  {METRIC_TIME}  </span> </li>  </ul> </div>  </div> ";
 
 var html_cards='';
 for(var i = 0; i < SystemObj.length; i++) {
@@ -113,6 +113,10 @@ html_cards+=this_metric_card+"\n";
 }
 
  $("#cpu_cards").html(html_cards);
+
+
+ //just for frills, create a little motion on the price change.
+//	$('#val1').animateNumber({	number: SystemObj[1].value });
 
   }, false);
 

@@ -20,23 +20,54 @@ function GetSysteInfo()
   $cpu=$loads[0]/$core_nums;
   $sysinfo="{ \"name\": \"CPU %\", \"value\": \"$cpu\" , \"time\": \" $time\", \"icon\": \"fa fa-cog\"   }, " ;
  
-  //Get RAM
-    $mem = round( ( memory_get_peak_usage())/1024,2)  . " Kb";
-	$sysinfo.="{ \"name\": \"RAM\", \"value\": \"$mem\" , \"time\": \" $time\" , \"icon\": \"fa fa-stack-overflow\" }, " ;
+  //Get SYSTEM RAM
+     $mem = round( ( memory_get_peak_usage())/1024,2)  . " Kb"; //INSUFFICIENT ONLY gets RAM allocated to PHP
+  
+  
+   $sysinfo.="{ \"name\": \"RAM\", \"value\": \"$mem\" , \"time\": \" $time\" , \"icon\": \"fa fa-stack-overflow\" }, " ;
 
 	//Uptime
 	$exec_uptime = preg_split("/[\s]+/", trim(shell_exec('uptime')));
     $uptime = $exec_uptime[2] . ' Days';
 	$sysinfo.="{ \"name\": \"UPTIME\", \"value\": \"$uptime\" , \"time\": \" $time\" , \"icon\": \"fa fa-clock-o\" }, " ;
 
+
+
    //Get Diskspace
     $bytes = disk_free_space("."); 
+   /*
     $si_prefix = array( 'B', 'KB', 'MB', 'GB', 'TB', 'EB', 'ZB', 'YB' );
     $base = 1024;
     $class = min((int)log($bytes , $base) , count($si_prefix) - 1);
     $disk_free_size=sprintf('%1.3f' , $bytes / pow($base,$class)) . ' ' . $si_prefix[$class] ;
-	$sysinfo.="{ \"name\": \"DISK_FREE\", \"value\": \"$disk_free_size\" , \"time\": \" $time\" , \"icon\": \"fa fa-hdd-o\" }  " ;
+	*/
+   $bytes=number_format($bytes)." b";
+	$sysinfo.="{ \"name\": \"DISK_FREE\", \"value\": \"$bytes\" , \"time\": \" $time\" , \"icon\": \"fa fa-hdd-o\" },  " ;
 
+
+	//SSE count
+	$size=filesize('counter.txt') ;  //Just a file that keeps an incrment counter
+	$fp = fopen("counter.txt", "r+");
+
+	while(!flock($fp, LOCK_EX)) {  // acquire an exclusive lock
+	// waiting to lock the file
+	}
+
+	$counter = intval(fread($fp, filesize("counter.txt")));
+	$counter++;
+
+	ftruncate($fp, 0);      // truncate file
+	fwrite($fp, $counter);  // set your data
+	fflush($fp);            // flush output before releasing the lock
+	flock($fp, LOCK_UN);    // release the lock
+
+	fclose($fp);
+    
+	$sysinfo.="{ \"name\": \"SSE_COUNT\", \"value\": \"$counter\" , \"time\": \" $time\" , \"icon\": \"fa fa-hdd-o\" },  " ;
+
+	$sysinfo.="{ \"name\": \"COUNT_SIZE\", \"value\": \"$size b\" , \"time\": \" $time\" , \"icon\": \"fa fa-hdd-o\" }  " ;
+
+	//Aapche Log File REGEX: /^(\S+) (\S+) (\S+) \[([^:]+):(\d+:\d+:\d+) ([^\]]+)\] \"(\S+) (.*?) (\S+)\" (\S+) (\S+) "([^"]*)" "([^"]*)"$/
 
  $json= "[".rtrim($sysinfo, ',')."]";
 
