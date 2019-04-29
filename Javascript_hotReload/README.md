@@ -1,4 +1,4 @@
-# simple  HOT Reload JS
+# Easy and Simple  HOT Reload JS
 ![](hotreload_page.PNG?raw=true) 
 This is a simple plain vanilla JS file hot-reload checker,
 It simulates browser hot-reload through a combination of 
