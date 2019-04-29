@@ -2,10 +2,12 @@
 ![](hotreload_page.PNG?raw=true) 
 This is a simple plain vanilla JS file hot-reload checker,
 It simulates browser hot-reload through a combination of 
-polling and server-sde file checker. EXTREMELY SIMPLE SCript to 
-deploy and use.  Just add one  line of code to the bottom of any web page
-that you want to re-load on file change. 
+polling and server-side file checker. 
 
+EXTREMELY SIMPLE SCript to use
+  -  Just add one  line of code to the bottom of any web page that you want to re-load on file change. 
+  - then place the file checker ( *hotreload.php* script ) in the server path the same as the page
+  
 ### Prerequisites
 
 Requires that the web page you want to hot reload be served form a 
