@@ -21,7 +21,7 @@ EXTREMELY SIMPLE SCript to use
 <script type="text/javascript" src="hotreload.js"></script>
 ```
 
- - then place the file checker ( *hotreload.php* script ) in the server path the same as the page
+ - then place the file checker ( **hotreload.php** script ) in the server path the same as the page
   
 Finally, make the any changes to your web page, and momentarily it 
 should reload the newly saved page.  Note any form or other session 
