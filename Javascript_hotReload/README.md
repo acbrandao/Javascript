@@ -1,5 +1,5 @@
 # simple  HOT Reload JS
-![](images/myRetirmentCalculatorScreen.png?raw=true) 
+![](hotreload_page.PNG?raw=true) 
 This is a simple plain vanilla JS file hot-reload checker,
 	It simulates browser hot-reload through a combination of 
 	polling and server-sde file checker. EXTREMELY SIMPLE SCript to 
