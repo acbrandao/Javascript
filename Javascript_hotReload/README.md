@@ -1,10 +1,10 @@
 # simple  HOT Reload JS
 ![](hotreload_page.PNG?raw=true) 
 This is a simple plain vanilla JS file hot-reload checker,
-	It simulates browser hot-reload through a combination of 
-	polling and server-sde file checker. EXTREMELY SIMPLE SCript to 
-	deploy and use.  Just add one  line of code to the bottom of any web page
-	that you want to re-load on file change. 
+It simulates browser hot-reload through a combination of 
+polling and server-sde file checker. EXTREMELY SIMPLE SCript to 
+deploy and use.  Just add one  line of code to the bottom of any web page
+that you want to re-load on file change. 
 
 ### Prerequisites
 
@@ -35,22 +35,26 @@ to
 <h1> It works! Simpel JS Hot Reload <h1>
 ```
 
-and you'r web page should shoe the difference
+and you're web page should should reload in a couple of seconds, notice the difference?
 
 ### Tested in ..
 
+I tested this with  the following browsers and it worked:
+  * Chrome 
+  * Fireox 
+  * Internet Explorer Edge
+  
+It makes use of any HTML 'XMLHttpRequest()' so any browser that supports that should work.
 
 ## Deployment
 
-This is primarily a web development AID, when you're happy with 
+This is primarily a web development AID to save you from re-loading a web page as you're changing it, when you're happy with 
 you're web page, simplly, remove the <Script> tag
+	
 ```
 <script type="text/javascript" src="hotreload.js"></script>
 ```
-
 and you're page will stop the reloads.
-
-
 
 ## Authors
 
