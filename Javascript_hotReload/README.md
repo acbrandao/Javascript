@@ -61,7 +61,7 @@ and you're page will stop the reloads.
 
 ## Authors
 
-* **Tony Brandao** - *Initial work* - [TonyBrandao](https://github.com/PurpleBooth)
+* **Tony Brandao** - *Initial work* - [TonyBrandao](https://github.com/acbrandao)
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
