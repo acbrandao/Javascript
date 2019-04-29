@@ -4,10 +4,6 @@ This is a simple plain vanilla JS file hot-reload checker,
 It simulates browser hot-reload through a combination of 
 polling and server-side file checker. 
 
-EXTREMELY SIMPLE SCript to use
-  -  Just add one  line of code to the bottom of any web page that you want to re-load on file change. 
-  - then place the file checker ( *hotreload.php* script ) in the server path the same as the page
-  
 ### Prerequisites
 
 Requires that the web page you want to hot reload be served form a 
@@ -18,10 +14,15 @@ PHP web server, so that the PHP file checker can run.
 Simple clone this repo to your development directory tree , or just 
 save the hotreload.js file and add it to the bottom of your web page.
 
+EXTREMELY SIMPLE SCript to use
+  -  Just add one  line of code to the bottom of any web page that you want to re-load on file change. 
+ 
 ```
 <script type="text/javascript" src="hotreload.js"></script>
 ```
 
+ - then place the file checker ( *hotreload.php* script ) in the server path the same as the page
+  
 Finally, make the any changes to your web page, and momentarily it 
 should reload the newly saved page.  Note any form or other session 
 data on your web page will not be retained. 
