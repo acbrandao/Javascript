@@ -10,13 +10,13 @@
 ///   Name:           Date:        Description:
 ///-----------------------------------------------------------------
 var page =location.href.split("/").slice(-1); 
-if (page=="") 
-  page="index.html" ;  //defaults to index.hmtl or index.php
+if (page=="")   //defaults to index.hmtl if no name is found from the location.href
+  page="index.html" ; 
 
 
 console.log(" Current page: "+ page );
 var url="hotreload.php?file="+page ; //change this to whatever you want it to be
-var poll_interval=2000; //every x seconds poll for file changes.
+var poll_interval=3000; //every x seconds poll for file changes. Ajust to suit your requirements
 
 setInterval( function() {
     var xmlhttp = new XMLHttpRequest();
@@ -30,11 +30,10 @@ setInterval( function() {
 
  				if (j.hasChanged)
  				  { 
- 					console.log("Changed!");
- 				    window.location.reload(false);
+ 				    console.log("Changed!");
+ 				    window.location.reload(false);  //reload the entire page
  				   }	
- 				else
-				console.log("No Change:");
+ 				
  
  				
            }
