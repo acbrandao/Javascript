@@ -10,7 +10,7 @@
 ///   Name:           Date:        Description:
 ///-----------------------------------------------------------------
 var page =location.href.split("/").slice(-1); 
-if (page) 
+if (page=="") 
   page="index.html" ;  //defaults to index.hmtl or index.php
 
 
