@@ -12,7 +12,7 @@ samples, for example my JavascriptSnippets is just a series of HTML pages that d
 
 Just Got clone this repostiry and make use of the projects that you need.
 
-## Description of eachn
+## Description of each
 | Directroy                   | Description   | Dependencies  |
 | :-------------------------- |:------------- | -----:|
 | JavascriptCurrencyConverter | A plain JS currency Converter that makes use og PHP script to fetch ECB rates | JS, PHP, Internet |
