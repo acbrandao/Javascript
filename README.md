@@ -19,6 +19,7 @@ Just Got clone this repostiry and make use of the projects that you need.
 | JavascriptSnippets    | 10 short plain and Jquery JAvascript Snippets      |   JS, JQuery |
 | Javascript_SSEvents  | Code Demonstrating SErver Sent Events, like stocks, weather and cpu       |    JS, PHP |
 | Javascript_hotReload | Javascirpt and PHP to help in hot-reloading a web page on file change | JS, PHP |
+| nodejs  | NodeJs Related scripts | JS, NodeJs |
 
 ## Contributing
 1. Fork it!
