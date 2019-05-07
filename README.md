@@ -1,4 +1,6 @@
 # Javascript examples 
+
+<img align="right" width="250" src="https://github.com/acbrandao/templates/blob/master/img/javascript.png">
 This folder has an assorted collection of Javascript utilities and sample files.Most
 ly this is a collection of Javascript snippets that I find useful.
 
