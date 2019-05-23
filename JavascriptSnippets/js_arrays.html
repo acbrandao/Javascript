@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>The HTML5 Javascirpt</title>
+    <meta name="description" content="The HTML5 JAvascirpt " />
+    <meta name="author" content="www.abrandao.com" />
+
+    <script>
+      const things = [
+        { name: "Automobile", cost: 7600 },
+        { name: "LCD TV", cost: 500 },
+        { name: "Music CD", cost: 19.99 },
+        { name: "Xbox One", cost: 400 },
+        { name: "Dell XPS 15", cost: 1200 },
+        { name: "IPhone 10", cost: 900 },
+        { name: "Snickers Candy Bar", cost: 1.29 }
+      ];
+    </script>
+  </head>
+  <body>
+    <h1>USeful Array functions</h1>
+    <p>
+      A set of array functions that are useful and commonly used, use
+      <strong>view source</strong> to see code
+    </p>
+    <h5>Array Printing</h5>
+    <p>print an array of objects</p>
+    <span id="things_arr"></span>
+
+    <script>
+      things_arr.innerHTML = JSON.stringify(things);
+    </script>
+
+    <h5>Array Filtering</h5>
+    <p>
+      show All object kess than cost=1000<br />
+      <span id="filter"></span>
+    </p>
+    <script>
+      const filterthings = things.filter(thing => {
+        return thing.cost <= 1000;
+      });
+
+      filter.innerHTML = JSON.stringify(filterthings);
+    </script>
+
+    <h5>Array Mapping</h5>
+    <p><span id="map"></span></p>
+    <script>
+      const mapthings = things.map(thing => {
+        return thing.name;
+      });
+      map.innerHTML = JSON.stringify(mapthings);
+    </script>
+
+    <h5>Array Find</h5>
+    <p>Search Array for match <span id="find"></span></p>
+    <script>
+      const findthings = things.find(thing => {
+        return thing.name.name === "Xbox One";
+      });
+      find.innerHTML = JSON.stringify(findthings);
+    </script>
+
+    <h5>Array foreach</h5>
+    <script>
+      things.forEach(thing => {
+        document.writeln("<li>" + thing.name);
+      });
+    </script>
+
+    <h5>Array Reduce</h5>
+    <p>reduce method sums up: <span id="reduce"></span></p>
+    <script>
+      const sumCosts = things.reduce((currentSum, thing) => {
+        return thing.cost + currentSum;
+      }, 0);
+      reduce.innerHTML = JSON.stringify(sumCosts);
+    </script>
+  </body>
+</html>
