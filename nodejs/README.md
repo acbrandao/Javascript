@@ -7,6 +7,13 @@ ly this is a collection of Javascript snippets that I find useful.
 These scripts all require that NodeJS be installed and running, to install nodeJS on a linux box.
 
 Visit https://nodejs.org/en/   for installation details.  Once installed issue the command to verify installaiton
+on  Ubuntu and othe Debian systems.
+
+```
+sudo apt-get update
+sudo apt-get install nodejs
+sudo apt-get install npm
+```
 
 ```
 node -v 
