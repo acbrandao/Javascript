@@ -1,5 +1,5 @@
-# Javascript Ping 
-This Javascript HTML Pong Game was created mostly via prompts to chatGPT..
+# HTML/Javascript Pong 
+This Javascript HTML Pong Game was created mostly via prompts  from chatGPT..
 
 ## The Game  : Pong
 
