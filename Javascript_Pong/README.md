@@ -1,9 +1,10 @@
 # HTML/Javascript Pong 
-This Javascript HTML Pong Game was created mostly via prompts  from chatGPT..
+This Javascript HTML Pong Game was created mostly via prompts from chatGPT. It took a while , and its a lot more involveed than 
+just saying, ChatGPT *Write me a Pong html game*
 
 ## The Game  : Pong
 
-Pong is considered the first graphical video game, borrowing elements form table/tenis, you simply use your digital paddle to hit the ball to the other side.
+Pong is considered the first graphical video game, You can find the fascinating history here..[https://en.wikipedia.org/wiki/Pong](Wikipedia Pong} borrowing elements form table/tenis, you simply use your digital paddle to hit the ball to the other side.
 
 ![HTML Pong](pong-html.png)
 
