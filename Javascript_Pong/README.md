@@ -11,7 +11,10 @@ this version uses HTML/Jaavscritp language to allwo a web browser playable game
 ![HTML Pong](pong-html.png)
 
 ## Installation
-Simply clone  or download the few files into your webserver or file directory. then simply open the pong.html page in your browser.
+Simply clone  or download:
+
+- git clone https://github.com/acbrandao/Javascript/tree/master/Javascript_Pong
+-  then simply open the ** pong.html** page in your browser.
 
 ## How to Play
 
