@@ -4,7 +4,9 @@ just saying, ChatGPT *Write me a Pong html game*
 
 ## The Game  : Pong
 
-Pong is considered the first graphical video game, You can find the fascinating history here..[https://en.wikipedia.org/wiki/Pong](Wikipedia Pong} borrowing elements form table/tenis, you simply use your digital paddle to hit the ball to the other side.
+The first successful graphical video game is widely considered to be Pong, released in 1972. It was developed by Atari, founded by Nolan Bushnell and Ted Dabney, and was inspired by an earlier tennis game called "Tennis for Two" created in 1958 by physicist William Higinbotham. Pong was a simple game in which two players used paddles to hit a ball back and forth across a screen. It was an instant success, and it helped to popularize video games and launch the arcade industry.  graphical video game, You can find the fascinating history here..[https://en.wikipedia.org/wiki/Pong](Wikipedia Pong} borrowing elements form table/tenis, you simply use your digital paddle to hit the ball to the other side. 
+
+this version uses HTML/Jaavscritp language to allwo a web browser playable game
 
 ![HTML Pong](pong-html.png)
 
