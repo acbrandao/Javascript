@@ -9,6 +9,21 @@ The entire application vibe coded using ChatGTP v5, is **depeendency free** and 
 
 ![FX Dashbaord ](fx_dashboard.jpg)
 
+## Customization
+
+You can add your own currency pairs by simply updating the pairs array 
+code located near line 135. Simply add you're only currency pair
+
+```
+  // === Pairs ================================================================
+  const PAIRS = [
+    ["USD","EUR"], ["USD","JPY"], ["USD","GBP"], ["EUR","GBP"],
+    ["USD","CNY"], ["USD","AUD"], ["USD","CAD"], ["USD","CHF"],["USD","MXN"],
+    ["CHF","EUR"], ["USD","HKD"], ["USD","NZD"], ["USD","BRL"],
+    ["USD","PHP"], 
+  ];
+  ```
+
 ## Installation
 Simply clone  or download:
 
@@ -19,7 +34,7 @@ Simply clone  or download:
 ## How to User
 
  Simply open the page in any browser, and it will autorefresh with the latest currency fx rates.
- 
+
 ## Contributing
 1. Fork it!
 2. Create your feature branch: `git checkout -b my-new-feature`
