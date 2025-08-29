@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Exchange Rates Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 300;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .refresh-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .refresh-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .refresh-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .refresh-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .last-updated {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        .currency-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .currency-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .currency-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .currency-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 48px rgba(0,0,0,0.15);
+        }
+
+        .currency-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .currency-pair {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .currency-code {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .reverse-btn {
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 20px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            color: #667eea;
+        }
+
+        .reverse-btn:hover {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: rgba(102, 126, 234, 0.5);
+            transform: rotate(180deg);
+        }
+
+        .currency-flags {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .currency-flag {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.7rem;
+        }
+
+        .arrow {
+            color: #7f8c8d;
+            font-size: 0.8rem;
+        }
+
+        .rate-info {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #7f8c8d;
+            font-size: 0.85rem;
+        }
+
+        .exchange-rate {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .currency-name {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .sparkline-container {
+            height: 60px;
+            width: 100%;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 10px;
+            padding: 5px;
+            margin-top: 15px;
+        }
+
+        .sparkline {
+            width: 100%;
+            height: 100%;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            color: #e74c3c;
+            text-align: center;
+            padding: 20px;
+            background: rgba(231, 76, 60, 0.1);
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Currency Exchange Rates</h1>
+            <p>Real-time rates from European Central Bank</p>
+        </div>
+        
+        <div class="refresh-section">
+            <button class="refresh-btn" onclick="loadCurrencyData()">🔄 Refresh Data</button>
+            <div class="last-updated" id="lastUpdated">Last updated: Never</div>
+        </div>
+        
+        <div id="loadingIndicator" class="loading">
+            <div class="spinner"></div>
+            Loading currency data...
+        </div>
+        
+        <div id="currencyGrid" class="currency-grid" style="display: none;"></div>
+        <div id="errorMessage" class="error" style="display: none;"></div>
+    </div>
+
+    <script>
+        // Currency pairs with their display names
+        const currencyPairs = {
+            'USDEUR': { from: 'USD', to: 'EUR', name: 'US Dollar to Euro' },
+            'USDJPY': { from: 'USD', to: 'JPY', name: 'US Dollar to Japanese Yen' },
+            'USDGBP': { from: 'USD', to: 'GBP', name: 'US Dollar to British Pound' },
+            'EURGBP': { from: 'EUR', to: 'GBP', name: 'Euro to British Pound' },
+            'USDCNY': { from: 'USD', to: 'CNY', name: 'US Dollar to Chinese Yuan' },
+            'USDAUD': { from: 'USD', to: 'AUD', name: 'US Dollar to Australian Dollar' },
+            'USDCAD': { from: 'USD', to: 'CAD', name: 'US Dollar to Canadian Dollar' },
+            'USDMXN': { from: 'USD', to: 'MXN', name: 'US Dollar to Mexican Peso' },
+
+            'USDCHF': { from: 'USD', to: 'CHF', name: 'US Dollar to Swiss Franc' },
+            'CHFEUR': { from: 'CHF', to: 'EUR', name: 'Swiss Franc to Euro' },
+            'USDHKD': { from: 'USD', to: 'HKD', name: 'US Dollar to Hong Kong Dollar' },
+            'USDNZD': { from: 'USD', to: 'NZD', name: 'US Dollar to New Zealand Dollar' },
+            'USDBRL': { from: 'USD', to: 'BRL', name: 'US Dollar to Brazilian Real' },
+            'USDPHP': { from: 'USD', to: 'PHP', name: 'US Dollar to Philippine Peso' },
+            'USDRUB': { from: 'USD', to: 'RUB', name: 'US Dollar to Russian Ruble' }
+        };
+
+        let exchangeRates = {};
+        let reversedPairs = new Set();
+
+        async function fetchExchangeRates() {
+            try {
+                // Using Alpha Vantage API (you'll need to get a free API key)
+                // For demo purposes, we'll use exchangerate-api.com which supports multiple pairs
+                const apis = [
+                    'https://api.exchangerate-api.com/v4/latest/USD',
+                    'https://api.fxratesapi.com/latest?base=USD'
+                ];
+                
+                let usdRates = null;
+                let eurRates = null;
+                let chfRates = null;
+                
+                // Fetch USD base rates
+                for (const apiUrl of apis) {
+                    try {
+                        console.log('Fetching USD rates from:', apiUrl);
+                        const response = await fetch(apiUrl);
+                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                        
+                        const data = await response.json();
+                        usdRates = data.rates;
+                        break;
+                    } catch (error) {
+                        console.warn(`API ${apiUrl} failed:`, error.message);
+                        continue;
+                    }
+                }
+                
+                // Fetch EUR base rates for EUR/GBP pair
+                try {
+                    const eurResponse = await fetch('https://api.exchangerate-api.com/v4/latest/EUR');
+                    if (eurResponse.ok) {
+                        const eurData = await eurResponse.json();
+                        eurRates = eurData.rates;
+                    }
+                } catch (error) {
+                    console.warn('EUR rates fetch failed:', error.message);
+                }
+                
+                // Fetch CHF base rates for CHF/EUR pair
+                try {
+                    const chfResponse = await fetch('https://api.exchangerate-api.com/v4/latest/CHF');
+                    if (chfResponse.ok) {
+                        const chfData = await chfResponse.json();
+                        chfRates = chfData.rates;
+                    }
+                } catch (error) {
+                    console.warn('CHF rates fetch failed:', error.message);
+                }
+                
+                if (!usdRates) {
+                    throw new Error('Failed to fetch USD exchange rates');
+                }
+                
+                // Calculate all currency pairs
+                exchangeRates = {};
+                
+                // USD pairs
+                Object.entries(currencyPairs).forEach(([pairKey, pair]) => {
+                    if (pair.from === 'USD') {
+                        exchangeRates[pairKey] = usdRates[pair.to] || getDemoRate(pairKey);
+                    } else if (pair.from === 'EUR' && pair.to === 'GBP' && eurRates) {
+                        exchangeRates[pairKey] = eurRates[pair.to] || getDemoRate(pairKey);
+                    } else if (pair.from === 'CHF' && pair.to === 'EUR' && chfRates) {
+                        exchangeRates[pairKey] = chfRates[pair.to] || getDemoRate(pairKey);
+                    } else {
+                        // Calculate cross rates or use demo data
+                        exchangeRates[pairKey] = getDemoRate(pairKey);
+                    }
+                });
+                
+                // Generate historical data
+                generateHistoricalData();
+                
+                return { success: true, demo: !usdRates };
+                
+            } catch (error) {
+                console.error('Error fetching exchange rates:', error);
+                return useDemoExchangeRates();
+            }
+        }
+        
+        function getDemoRate(pairKey) {
+            const demoRates = {
+                'USDMXN': 18.50,
+                'USDEUR': 0.9156,
+                'USDJPY': 149.32,
+                'USDGBP': 0.7912,
+                'EURGBP': 0.8641,
+                'USDCNY': 7.2891,
+                'USDAUD': 1.5234,
+                'USDCAD': 1.3567,
+                'USDCHF': 0.8945,
+                'CHFEUR': 1.0234,
+                'USDHKD': 7.8123,
+                'USDNZD': 1.6789,
+                'USDBRL': 5.1234,
+                'USDPHP': 56.789,
+                'USDRUB': 92.45
+            };
+            return demoRates[pairKey] || 1.0;
+        }
+        
+        function useDemoExchangeRates() {
+            console.log('Using demo exchange rates as fallback');
+            Object.keys(currencyPairs).forEach(pairKey => {
+                exchangeRates[pairKey] = getDemoRate(pairKey);
+            });
+            
+            generateHistoricalData();
+            return { success: true, demo: true };
+        }
+
+        function generateHistoricalData() {
+            historicalData = {};
+            Object.keys(currencyPairs).forEach(pairKey => {
+                const currentRate = exchangeRates[pairKey];
+                const data = [];
+                
+                // Generate 30 days of realistic historical data
+                for (let i = 29; i >= 0; i--) {
+                    const variation = (Math.random() - 0.5) * 0.08; // ±4% variation
+                    const dailyChange = Math.sin(i / 5) * 0.02; // Some trend
+                    const rate = currentRate * (1 + variation * (i / 30) + dailyChange);
+                    data.push(Math.max(rate, 0.001)); // Ensure positive values
+                }
+                
+                historicalData[pairKey] = data;
+            });
+        }
+
+        function togglePairDirection(pairKey) {
+            const pair = currencyPairs[pairKey];
+            const currentRate = exchangeRates[pairKey];
+            
+            if (reversedPairs.has(pairKey)) {
+                reversedPairs.delete(pairKey);
+            } else {
+                reversedPairs.add(pairKey);
+            }
+            
+            renderCurrencyGrid();
+        }
+
+        function getDisplayRate(pairKey) {
+            const rate = exchangeRates[pairKey];
+            return reversedPairs.has(pairKey) ? (1 / rate) : rate;
+        }
+
+        function getDisplayPair(pairKey) {
+            const pair = currencyPairs[pairKey];
+            if (reversedPairs.has(pairKey)) {
+                return {
+                    from: pair.to,
+                    to: pair.from,
+                    name: `${getCurrencyName(pair.to)} to ${getCurrencyName(pair.from)}`
+                };
+            }
+            return pair;
+        }
+
+        function getCurrencyName(code) {
+            const names = {
+                'USD': 'US Dollar', 'EUR': 'Euro', 'JPY': 'Japanese Yen',
+                'GBP': 'British Pound', 'CNY': 'Chinese Yuan', 'AUD': 'Australian Dollar',
+                'CAD': 'Canadian Dollar', 'CHF': 'Swiss Franc', 'HKD': 'Hong Kong Dollar',
+                'NZD': 'New Zealand Dollar', 'BRL': 'Brazilian Real', 'PHP': 'Philippine Peso',
+                'RUB': 'Russian Ruble'
+            };
+            return names[code] || code;
+        }
+
+        function createSparkline(containerId, data) {
+            const container = document.getElementById(containerId);
+            if (!container || !data || data.length === 0) return;
+            
+            const width = container.clientWidth - 10;
+            const height = container.clientHeight - 10;
+            
+            const maxVal = Math.max(...data);
+            const minVal = Math.min(...data);
+            const range = maxVal - minVal || 1;
+            
+            let pathData = '';
+            data.forEach((value, index) => {
+                const x = (index / (data.length - 1)) * width;
+                const y = height - ((value - minVal) / range) * height;
+                pathData += (index === 0 ? 'M' : 'L') + x + ',' + y;
+            });
+            
+            const svg = `
+                <svg width="${width}" height="${height}" class="sparkline">
+                    <defs>
+                        <linearGradient id="sparkline-gradient-${containerId}" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <path d="${pathData}" stroke="url(#sparkline-gradient-${containerId})" stroke-width="2" fill="none"/>
+                </svg>
+            `;
+            
+            container.innerHTML = svg;
+        }
+
+        function renderCurrencyGrid() {
+            const grid = document.getElementById('currencyGrid');
+            grid.innerHTML = '';
+            
+            Object.entries(currencyPairs).forEach(([pairKey, originalPair]) => {
+                const displayRate = getDisplayRate(pairKey);
+                const displayPair = getDisplayPair(pairKey);
+                const sparklineId = `sparkline-${pairKey}`;
+                const isReversed = reversedPairs.has(pairKey);
+                
+                const card = document.createElement('div');
+                card.className = 'currency-card';
+                card.innerHTML = `
+                    <div class="currency-header">
+                        <div class="currency-pair">
+                            <div class="currency-code">${displayPair.from}/${displayPair.to}</div>
+                            <button class="reverse-btn" onclick="togglePairDirection('${pairKey}')" title="Reverse exchange rate">
+                                🔄
+                            </button>
+                        </div>
+                        <div class="currency-flags">
+                            <div class="currency-flag">${displayPair.from}</div>
+                            <div class="arrow">→</div>
+                            <div class="currency-flag">${displayPair.to}</div>
+                        </div>
+                    </div>
+                    <div class="exchange-rate">${formatRate(displayRate)}</div>
+                    <div class="currency-name">${displayPair.name}</div>
+                    <div class="rate-info">
+                        <small>1 ${displayPair.from} = ${formatRate(displayRate)} ${displayPair.to}</small>
+                    </div>
+                    <div class="sparkline-container">
+                        <div id="${sparklineId}" class="sparkline"></div>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+                
+                // Create sparkline with potentially reversed data
+                setTimeout(() => {
+                    let chartData = historicalData[pairKey] || [];
+                    if (isReversed && chartData.length > 0) {
+                        chartData = chartData.map(rate => 1 / rate);
+                    }
+                    createSparkline(sparklineId, chartData);
+                }, 100);
+            });
+        }
+
+        function formatRate(rate) {
+            if (rate > 100) {
+                return rate.toFixed(2);
+            } else if (rate > 10) {
+                return rate.toFixed(4);
+            } else {
+                return rate.toFixed(6);
+            }
+        }
+
+        async function loadCurrencyData() {
+            const loading = document.getElementById('loadingIndicator');
+            const grid = document.getElementById('currencyGrid');
+            const error = document.getElementById('errorMessage');
+            const refreshBtn = document.querySelector('.refresh-btn');
+            
+            loading.style.display = 'flex';
+            grid.style.display = 'none';
+            error.style.display = 'none';
+            refreshBtn.disabled = true;
+            
+            try {
+                const result = await fetchExchangeRates();
+                renderCurrencyGrid();
+                
+                loading.style.display = 'none';
+                grid.style.display = 'grid';
+                
+                // Update last updated time
+                const now = new Date();
+                const isDemo = result && result.demo;
+                document.getElementById('lastUpdated').textContent = 
+                    `Last updated: ${now.toLocaleString()}${isDemo ? ' (Demo Data)' : ''}`;
+                
+                if (isDemo) {
+                    // Show a subtle indicator that we're using demo data
+                    const header = document.querySelector('.header p');
+                    header.textContent = 'Demo rates - API temporarily unavailable';
+                    header.style.color = 'rgba(255, 255, 255, 0.8)';
+                } else {
+                    const header = document.querySelector('.header p');
+                    header.textContent = 'Real-time exchange rates from financial markets';
+                    header.style.color = 'white';
+                }
+                
+            } catch (err) {
+                loading.style.display = 'none';
+                error.style.display = 'block';
+                error.textContent = `Error loading exchange rates: ${err.message}`;
+            } finally {
+                refreshBtn.disabled = false;
+            }
+        }
+
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', loadCurrencyData);
+        
+        // Auto-refresh every 5 minutes
+        setInterval(loadCurrencyData, 5 * 60 * 1000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,623 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Top FX Rates — Draggable Grid</title>
+<style>
+  :root{
+    --bg:#0a0d12; --card:#0f172a; --card2:#0b1220; --text:#e5e7eb; --muted:#9ca3af;
+    --accent:#60a5fa; --ring:rgba(96,165,250,.3); --up:#22c55e; --down:#ef4444; --warn:#f59e0b;
+  }
+  html,body{height:100%}
+  body{
+    margin:0; color:var(--text);
+    background:
+      radial-gradient(1200px 600px at 10% -10%, #1f2937 0%, transparent 60%),
+      radial-gradient(1000px 600px at 90% -10%, #0b3b61 0%, transparent 55%),
+      linear-gradient(180deg, #0b0f14 0%, #0a0d12 100%);
+    font: 16px/1.45 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans";
+  }
+  header{ padding:clamp(16px, 3vw, 28px); display:grid; grid-template-columns:1fr auto; gap:14px; align-items:center }
+  h1{margin:0; font-size: clamp(22px, 3.2vw, 36px); letter-spacing:.2px}
+  .sub{color:var(--muted); font-size: 13px}
+  .controls{display:flex; align-items:center; gap:12px; flex-wrap:wrap}
+  button{
+    background: linear-gradient(180deg,#2563eb,#1d4ed8);
+    color:white; border:0; padding:10px 14px; border-radius:12px;
+    font-weight:700; letter-spacing:.2px; cursor:pointer;
+    box-shadow: 0 8px 20px rgba(37,99,235,.35), inset 0 1px 0 rgba(255,255,255,.2);
+    transition: transform .05s ease-in-out, box-shadow .2s ease;
+  }
+  button:hover{ box-shadow: 0 10px 24px rgba(37,99,235,.45), inset 0 1px 0 rgba(255,255,255,.25) }
+  button:active{ transform: translateY(1px) scale(.99) }
+  .stamp{ color:var(--muted); font-size:13px }
+  .countdown{ color:var(--muted); font-weight:600 }
+  .source{ color:var(--muted); font-size:12px; grid-column:1 / -1 }
+
+  .grid{
+    padding: clamp(12px, 2.4vw, 30px);
+    display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: clamp(12px, 2vw, 20px);
+  }
+  .card{
+    position:relative;
+    background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00)),
+                linear-gradient(180deg, var(--card), var(--card2));
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 16px; padding: 16px 16px 12px; box-shadow: 0 6px 30px rgba(0,0,0,.35);
+    overflow:hidden;
+  }
+  .card::after{ content:""; position:absolute; inset:-1px; border-radius:16px; box-shadow:0 0 0 1px var(--ring); opacity:0; pointer-events:none; transition:opacity .2s }
+  .card:hover::after{ opacity:1 }
+  .head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px }
+  .pair{font-weight:900; font-size:20px; letter-spacing:.6px}
+  .badge{ background: rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.1);
+          padding:2px 8px; border-radius:999px; font-weight:600; font-size:11px; }
+  .swap{
+    position:absolute; top:10px; right:10px; width:28px; height:28px; border-radius:8px;
+    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15);
+    color:#cbd5e1; font-weight:900; cursor:pointer;
+  }
+  .swap:hover{ background:rgba(255,255,255,.12) }
+  .drag{
+    position:absolute; top:10px; left:10px; width:28px; height:28px; border-radius:8px;
+    background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.15);
+    color:#cbd5e1; font-weight:900; cursor:grab; display:flex; align-items:center; justify-content:center;
+  }
+  .drag:active{ cursor:grabbing }
+  .status{ position:absolute; top:10px; left:44px; font-size:11px; color:var(--warn); background:rgba(245,158,11,.15); padding:2px 8px; border:1px solid rgba(245,158,11,.35); border-radius:999px }
+
+  .dragging{ opacity:.6; transform: scale(.995) }
+  .drag-over{ outline:2px dashed rgba(96,165,250,.6); outline-offset:-6px; }
+
+  .rate{ font-variant-numeric: tabular-nums; font-weight:800; font-size: clamp(24px, 3.2vw, 30px); letter-spacing:.3px; margin: 2px 0 6px }
+  .delta{ font-size:12px; font-variant-numeric: tabular-nums; margin-bottom:8px }
+  .pill-up{ color:var(--up) } .pill-down{ color:var(--down) }
+  .spark-wrap{ background: rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); border-radius:10px; padding:6px 6px 2px }
+  canvas{ width:100%; height:52px; display:block }
+  .foot{ margin-top:10px; display:flex; align-items:center; justify-content:space-between; gap:8px; color:var(--muted); font-size:11px }
+  .note{ padding: 0 18px 18px; color: var(--muted); font-size: 12px }
+
+  /* Loading overlay */
+  .loading{
+    position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:10px; background: radial-gradient(1200px 600px at 50% -20%, rgba(31,41,55,.6), transparent 60%), rgba(10,13,18,.6);
+    backdrop-filter: blur(2px);
+    z-index: 50;
+  }
+  .hidden{ display:none !important; }
+
+  .spinner{
+    width:56px; height:56px; border-radius:50%;
+    border:4px solid rgba(255,255,255,.15);
+    border-top-color: var(--accent);
+    animation: spin 0.9s linear infinite;
+    box-shadow: 0 0 24px rgba(96,165,250,.35);
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-text{ font-weight:700; letter-spacing:.2px }
+  .loading-source{ color:var(--muted); font-size:13px }
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Top FX Rates — Draggable Grid</h1>
+    <div class="sub">
+      Providers: exchangerate.host (primary) + Frankfurter (fallback) • Last ref date: <span id="refDate">—</span>
+    </div>
+  </div>
+  <div class="controls">
+    <button id="refreshBtn" type="button" aria-label="Refresh now">⟳ Refresh</button>
+    <span class="stamp">Refreshed: <strong id="refreshedAt">—</strong></span>
+    <span class="countdown">Auto-refresh in <strong id="countdown">30:00</strong></span>
+  </div>
+
+</header>
+
+<!-- Loading overlay with spinner + source line -->
+<div id="loading" class="loading hidden" aria-live="polite" aria-busy="true">
+  <div class="spinner" role="status" aria-label="Loading"></div>
+  <div class="loading-text">Retrieving rates…</div>
+  <div id="loadingSource" class="loading-source">Source: —</div>
+</div>
+
+<main class="grid" id="grid" aria-live="polite" aria-busy="true"></main>
+<div class="note" id="note"></div>
+
+<script>
+/* ============================================================================
+   DRAGGABLE + RESILIENT FX GRID with Loading Overlay
+   - Drag handle per card (HTML5 DnD), persisted order
+   - Robust fetching (timeouts, retries, dual providers)
+   - Loading animation with live source(s) while fetching
+   ========================================================================== */
+(() => {
+  // === Pairs ================================================================
+  const PAIRS = [
+    ["USD","EUR"], ["USD","JPY"], ["USD","GBP"], ["EUR","GBP"],
+    ["USD","CNY"], ["USD","AUD"], ["USD","CAD"], ["USD","CHF"],["USD","MXN"],
+    ["CHF","EUR"], ["USD","HKD"], ["USD","NZD"], ["USD","BRL"],
+    ["USD","PHP"], 
+  ];
+
+  // === Providers & settings ================================================
+  const API_PRIMARY   = "https://api.exchangerate.host"; // /timeseries, /convert
+  const API_FALLBACK  = "https://api.frankfurter.app";   // /{start}..{end}?from=..&to=.. , /latest?from=..&to=..
+
+  const HISTORY_POINTS = 30;
+  const HISTORY_LOOKBACK_DAYS = 60;
+  const REFRESH_MS = 30 * 60 * 1000;
+  const REQUEST_TIMEOUT_MS = 12000;
+  const RETRIES = 2;
+  const BACKOFF_MS = 500;
+
+  const STORAGE_KEY = "fxGridOrderV1";
+
+  // === State ================================================================
+  let history = {};  // history[base][quote] = [{d,v},...]
+  let latest  = {};  // latest[base][quote] = number
+  let refDate = "";  // last date seen across responses
+  const reversed = {};  // "BASE/QUOTE" => boolean (user toggled)
+  let providersUsed = new Set(); // track which providers succeeded
+
+  let countdownMs = REFRESH_MS, countdownTimer = null;
+
+  // === DOM =================================================================
+  const grid = document.getElementById("grid");
+  const refDateEl = document.getElementById("refDate");
+  const refreshedAtEl = document.getElementById("refreshedAt");
+  const countdownEl = document.getElementById("countdown");
+  const noteEl = document.getElementById("note");
+
+  const loadingEl = document.getElementById("loading");
+  const loadingSourceEl = document.getElementById("loadingSource");
+
+  document.getElementById("refreshBtn").addEventListener("click", () => refreshNow(true));
+
+  // === Utils ===============================================================
+  const uniq = (a) => [...new Set(a)];
+  const groupByBase = (pairs) => aReduce(pairs, (m,[b,q]) => ((m[b] ||= []).push(q), m), {});
+  const aReduce = (arr, fn, init) => { for (const x of arr) init = fn(init, x); return init; };
+  const pad2 = (n) => n.toString().padStart(2,"0");
+  const todayIso = () => new Date().toISOString().slice(0,10);
+  const daysAgoIso = (d) => { const t = new Date(); t.setDate(t.getDate()-d); return t.toISOString().slice(0,10); };
+  const fmtNum = (n) => {
+    if (typeof n !== "number" || !isFinite(n)) return "—";
+    const abs = Math.abs(n);
+    const digits = abs >= 10 ? 4 : abs >= 1 ? 6 : 8;
+    return n.toLocaleString(undefined,{minimumFractionDigits:digits, maximumFractionDigits:digits});
+  };
+  const fmtPct = (n) => (isFinite(n) ? `${(n*100).toFixed(2)}%` : "—");
+  const nowStamp = () => new Date().toLocaleString();
+  const cardKey = (b,q) => `${b}/${q}`;
+  const cardId  = (b,q) => `card-${b}-${q}`;
+
+  function setLoading(on) {
+    try {
+      if (on) {
+        // show; source text will be filled dynamically as we learn providers
+        const names = [...providersUsed].length ? [...providersUsed].join(" + ") : "—";
+        loadingSourceEl.textContent = `Source${names.includes("+") ? "s" : ""}: ${names}`;
+        loadingEl.classList.remove("hidden");
+        document.body.setAttribute("aria-busy","true");
+      } else {
+        loadingEl.classList.add("hidden");
+        document.body.removeAttribute("aria-busy");
+      }
+    } catch(_e){}
+  }
+  function updateLoadingSources() {
+    try {
+      const names = [...providersUsed].length ? [...providersUsed].join(" + ") : "—";
+      loadingSourceEl.textContent = `Source${names.includes("+") ? "s" : ""}: ${names}`;
+    } catch(_e){}
+  }
+
+  // === Storage (persist order) ============================================
+  function saveOrder() {
+    const order = Array.from(grid.children).map(el => el.dataset.key);
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(order)); } catch(_e){}
+  }
+  function loadOrder() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      const arr = JSON.parse(raw);
+      return Array.isArray(arr) ? arr : null;
+    } catch(_e){ return null; }
+  }
+
+  // === Resilient fetch helpers ============================================
+  async function fetchJSON(url, {timeoutMs = REQUEST_TIMEOUT_MS, signal} = {}) {
+    const ctrl = new AbortController();
+    const id = setTimeout(() => ctrl.abort(), timeoutMs);
+    try {
+      const res = await fetch(url, {cache:"no-store", signal: signal || ctrl.signal});
+      if (!res.ok) return { ok:false, status:res.status, json:null };
+      const json = await res.json().catch(()=>null);
+      return { ok:true, status:res.status, json };
+    } catch (_e) {
+      return { ok:false, status:0, json:null };
+    } finally {
+      clearTimeout(id);
+    }
+  }
+  async function withRetry(fn, attempts = 1) {
+    for (let i=0;i<attempts;i++){
+      const r = await fn();
+      if (r) return r;
+      await new Promise(r => setTimeout(r, 500 * (i+1)));
+    }
+    return null;
+  }
+
+  // === Provider wrappers ===================================================
+  async function getTimeseriesPrimary(base, symbols, start, end) {
+    const url = `${API_PRIMARY}/timeseries?base=${encodeURIComponent(base)}&symbols=${encodeURIComponent(symbols.join(","))}&start_date=${start}&end_date=${end}`;
+    const r = await fetchJSON(url);
+    const j = r.json;
+    if (!r.ok || !j || !j.rates || !Object.keys(j.rates).length) return null;
+    providersUsed.add("exchangerate.host"); updateLoadingSources();
+    return { base: j.base || base, start_date: j.start_date || start, end_date: j.end_date || end, rates: j.rates };
+  }
+  async function getTimeseriesFallback(base, symbols, start, end) {
+    const url = `${API_FALLBACK}/${start}..${end}?from=${encodeURIComponent(base)}&to=${encodeURIComponent(symbols.join(","))}`;
+    const r = await fetchJSON(url);
+    const j = r.json;
+    if (!r.ok || !j || !j.rates || !Object.keys(j.rates).length) return null;
+    providersUsed.add("frankfurter.app"); updateLoadingSources();
+    return { base: j.base || base, start_date: j.start_date || start, end_date: j.end_date || end, rates: j.rates };
+  }
+  async function getLatestPrimary(base, quote) {
+    const url = `${API_PRIMARY}/convert?from=${encodeURIComponent(base)}&to=${encodeURIComponent(quote)}`;
+    const r = await fetchJSON(url);
+    const j = r.json;
+    if (!r.ok || !j || typeof j.result !== "number") return null;
+    providersUsed.add("exchangerate.host"); updateLoadingSources();
+    return { value: j.result, date: j.date || todayIso() };
+  }
+  async function getLatestFallback(base, quote) {
+    const url = `${API_FALLBACK}/latest?from=${encodeURIComponent(base)}&to=${encodeURIComponent(quote)}`;
+    const r = await fetchJSON(url);
+    const j = r.json;
+    const v = j && j.rates ? j.rates[quote] : null;
+    if (!r.ok || typeof v !== "number") return null;
+    providersUsed.add("frankfurter.app"); updateLoadingSources();
+    return { value: v, date: j.date || todayIso() };
+  }
+  async function getTimeseries(base, symbols, start, end) {
+    const primary = await withRetry(() => getTimeseriesPrimary(base, symbols, start, end), 3);
+    if (primary) return primary;
+    const fallback = await withRetry(() => getTimeseriesFallback(base, symbols, start, end), 3);
+    if (fallback) return fallback;
+    return null;
+  }
+  async function getLatest(base, quote) {
+    const p = await withRetry(() => getLatestPrimary(base, quote), 3);
+    if (p) return p;
+    const f = await withRetry(() => getLatestFallback(base, quote), 3);
+    if (f) return f;
+    return null;
+  }
+
+  // === Load everything =====================================================
+  async function loadAll() {
+    grid.setAttribute("aria-busy","true");
+    providersUsed = new Set(); // reset tracker
+    setLoading(true);
+    noteEl.textContent = "";
+
+    try {
+      const grouped = groupByBase(PAIRS);
+      const end = todayIso();
+      const start = daysAgoIso(HISTORY_LOOKBACK_DAYS);
+      history = {}; latest = {}; refDate = "";
+
+      // Timeseries per base
+      await Promise.all(Object.entries(grouped).map(async ([base, quotes]) => {
+        const syms = uniq(quotes);
+        const ts = await getTimeseries(base, syms, start, end);
+        if (ts && ts.rates) {
+          refDate = ts.end_date || refDate;
+          const dates = Object.keys(ts.rates).sort();
+          for (const q of syms) {
+            const arr = [];
+            for (const d of dates) {
+              const v = ts.rates[d]?.[q];
+              if (typeof v === "number") arr.push({ d, v });
+            }
+            if (arr.length) {
+              (((history[base] ||= {})[q] ||= [])).push(...arr.slice(-HISTORY_POINTS));
+              (((latest[base] ||= {}))[q] = arr[arr.length-1].v);
+            }
+          }
+        }
+      }));
+
+      // Per-pair latest fallback where needed
+      await Promise.all(PAIRS.map(async ([b,q]) => {
+        if (!latest[b]?.[q]) {
+          const one = await getLatest(b,q);
+          if (one) {
+            (((latest[b] ||= {}))[q] = one.value);
+            refDate = refDate || one.date;
+          }
+        }
+      }));
+
+      // Build grid once
+      if (!grid.childElementCount) {
+        const frag = document.createDocumentFragment();
+        const order = loadOrder();
+        const keys = PAIRS.map(([b,q]) => cardKey(b,q));
+        const orderedKeys = order && order.every(k => keys.includes(k)) ? order : keys;
+
+        const map = new Map(PAIRS.map(p => [cardKey(...p), p]));
+        for (const k of orderedKeys) {
+          const [b,q] = map.get(k) || [];
+          if (b && q) frag.appendChild(buildCard(b,q));
+        }
+        grid.appendChild(frag);
+        enableDragAndDrop(); // wire DnD listeners once
+      }
+
+      // Render all
+      refDateEl.textContent = refDate || "—";
+      for (const [b,q] of PAIRS) safeUpdate(() => updateCard(b,q));
+      refreshedAtEl.textContent = nowStamp();
+
+      const missing = PAIRS.filter(([b,q]) => !latest[b]?.[q]).length;
+      noteEl.textContent = missing ? `${missing} pair(s) missing timeseries or latest data; displayed with placeholders.` : "";
+
+    } catch (_e) {
+      noteEl.textContent = "Network issue or provider unavailable. Showing what we could retrieve.";
+      for (const [b,q] of PAIRS) safeUpdate(() => updateCard(b,q));
+    } finally {
+      grid.removeAttribute("aria-busy");
+      setLoading(false);
+    }
+  }
+
+  // === Cards ===============================================================
+  function buildCard(base, quote) {
+    const key = cardKey(base, quote);
+    reversed[key] = reversed[key] || false;
+
+    const card = document.createElement("article");
+    card.className = "card";
+    card.id = cardId(base, quote);
+    card.dataset.key = key;
+
+    card.innerHTML = `
+      <button class="drag" title="Drag to reorder" draggable="true" aria-label="Drag ${base}/${quote}" data-handle>⋮⋮</button>
+      <span class="status" id="status-${base}-${quote}" hidden>limited</span>
+      <button class="swap" title="Reverse pair" aria-label="Reverse ${base}/${quote}">⇄</button>
+      <div class="head">
+        <div class="pair" id="pair-${base}-${quote}">${base}/${quote}</div>
+        <div class="badge" id="per-${base}-${quote}">per 1 ${base}</div>
+      </div>
+      <div class="rate" id="rate-${base}-${quote}">—</div>
+      <div class="delta" id="delta-${base}-${quote}"><span class="sr-only">Change: </span><span>—</span></div>
+      <div class="spark-wrap">
+        <canvas id="spark-${base}-${quote}" width="320" height="60" aria-label="30-day mini chart for ${base}/${quote}"></canvas>
+      </div>
+      <div class="foot">
+        <span>30-day sparkline</span>
+        <span id="minmax-${base}-${quote}" class="muted"></span>
+      </div>
+    `;
+
+    // Reverse button
+    card.querySelector(".swap").addEventListener("click", (e) => {
+      e.stopPropagation();
+      reversed[key] = !reversed[key];
+      safeUpdate(() => updateCard(base, quote));
+    });
+
+    // Drag handle (HTML5 DnD)
+    const handle = card.querySelector("[data-handle]");
+    handle.addEventListener("dragstart", (e) => {
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/plain", key);
+      card.classList.add("dragging");
+    });
+    handle.addEventListener("dragend", () => {
+      card.classList.remove("dragging");
+      grid.querySelectorAll(".drag-over").forEach(el => el.classList.remove("drag-over"));
+      saveOrder();
+    });
+
+    return card;
+  }
+
+  function safeUpdate(fn){
+    try { fn(); } catch (_e) { /* keep UI stable */ }
+  }
+
+  function updateCard(base, quote) {
+    const key = cardKey(base, quote);
+    const isRev = !!reversed[key];
+
+    const pairEl = document.getElementById(`pair-${base}-${quote}`);
+    const perEl  = document.getElementById(`per-${base}-${quote}`);
+    const rateEl = document.getElementById(`rate-${base}-${quote}`);
+    const deltaEl= document.getElementById(`delta-${base}-${quote}`);
+    const mmEl   = document.getElementById(`minmax-${base}-${quote}`);
+    const cvs    = document.getElementById(`spark-${base}-${quote}`);
+    const status = document.getElementById(`status-${base}-${quote}`);
+    const ctx    = cvs.getContext("2d");
+
+    const arr = (history[base]?.[quote] || []).slice(-HISTORY_POINTS);
+    const lastDirect = latest[base]?.[quote];
+
+    // Determine values to show (normal or inverted)
+    let shownSeries = null, lastValue = null, prevValue = null;
+    if (arr.length >= 2) {
+      const vals = arr.map(x => x.v);
+      shownSeries = isRev ? vals.map(v => (v ? 1/v : NaN)) : vals.slice();
+      lastValue = shownSeries[shownSeries.length-1];
+      prevValue = shownSeries[shownSeries.length-2];
+      status.hidden = true;
+    } else if (typeof lastDirect === "number" && isFinite(lastDirect)) {
+      lastValue = isRev ? (1/lastDirect) : lastDirect;
+      shownSeries = null; // draw placeholder
+      status.hidden = false; status.textContent = "limited";
+    } else {
+      pairEl.textContent = `${isRev?quote:base}/${isRev?base:quote}`;
+      perEl.textContent  = `per 1 ${isRev?quote:base}`;
+      rateEl.textContent = "—";
+      deltaEl.innerHTML  = "—";
+      drawSparkline(ctx, null);
+      mmEl.textContent   = "";
+      status.hidden = false; status.textContent = "unavailable";
+      return;
+    }
+
+    pairEl.textContent = `${isRev?quote:base}/${isRev?base:quote}`;
+    perEl.textContent  = `per 1 ${isRev?quote:base}`;
+    rateEl.textContent = fmtNum(lastValue);
+
+    let ch = (prevValue && isFinite(prevValue)) ? (lastValue - prevValue) / prevValue : NaN;
+    const arrow = isFinite(ch) ? (ch>0 ? "▲" : ch<0 ? "▼" : "■") : "■";
+    const klass = isFinite(ch) ? (ch>0 ? "pill-up" : ch<0 ? "pill-down" : "") : "";
+    deltaEl.innerHTML = `<span class="${klass}">${arrow} ${fmtPct(ch)}</span> vs prev close`;
+
+    drawSparkline(ctx, shownSeries);
+
+    if (shownSeries && shownSeries.length) {
+      const finite = shownSeries.filter(Number.isFinite);
+      const mn = Math.min(...finite), mx = Math.max(...finite);
+      mmEl.textContent = `${fmtNum(mn)} – ${fmtNum(mx)}`;
+    } else {
+      mmEl.textContent = "";
+    }
+  }
+
+  function drawSparkline(ctx, values){
+    const w = ctx.canvas.width, h = ctx.canvas.height;
+    ctx.clearRect(0,0,w,h);
+    if(!values || values.length < 2 || values.every(v => !isFinite(v))){
+      ctx.globalAlpha = .3;
+      ctx.beginPath(); ctx.moveTo(8, h/2); ctx.lineTo(w-8, h/2);
+      ctx.lineWidth = 2; ctx.strokeStyle = "#6b7280"; ctx.stroke();
+      ctx.globalAlpha = 1; return;
+    }
+    const finiteVals = values.map(v => (isFinite(v)?v:NaN));
+    const min = Math.min(...finiteVals.filter(Number.isFinite));
+    const max = Math.max(...finiteVals.filter(Number.isFinite));
+    const padX = 6, padY = 6, span = Math.max(max - min, Number.EPSILON);
+    const n = values.length, dx = (w - 2*padX) / (n - 1);
+    const pts = values.map((v,i)=>{
+      const x = padX + i*dx;
+      const vv = isFinite(v) ? v : (i>0 ? values[i-1] : (i+1<values.length ? values[i+1] : min));
+      const y = h - padY - ((vv - min) / span) * (h - 2*padY);
+      return [x,y];
+    });
+
+    ctx.save();
+    ctx.beginPath(); pts.forEach(([x,y],i)=> i?ctx.lineTo(x,y):ctx.moveTo(x,y));
+    ctx.lineWidth = 2.5; ctx.shadowColor="rgba(96,165,250,.35)"; ctx.shadowBlur=8; ctx.strokeStyle="#60a5fa"; ctx.stroke();
+    ctx.restore();
+
+    const first = pts[0], last = pts[pts.length-1];
+    ctx.save();
+    ctx.beginPath(); pts.forEach(([x,y],i)=> i?ctx.lineTo(x,y):ctx.moveTo(x,y));
+    ctx.lineTo(last[0], h-padY); ctx.lineTo(first[0], h-padY); ctx.closePath();
+    const grad = ctx.createLinearGradient(0,0,0,h);
+    grad.addColorStop(0, "rgba(96,165,250,.28)"); grad.addColorStop(1, "rgba(96,165,250,0)");
+    ctx.fillStyle = grad; ctx.fill(); ctx.restore();
+
+    ctx.globalAlpha = .25; ctx.beginPath(); ctx.moveTo(6, h-padY); ctx.lineTo(w-6, h-padY);
+    ctx.lineWidth = 1; ctx.strokeStyle = "#6b7280"; ctx.stroke(); ctx.globalAlpha = 1;
+  }
+
+  // === Drag & Drop wiring ==================================================
+  function enableDragAndDrop(){
+    grid.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      const dragging = grid.querySelector(".card.dragging");
+      if (!dragging) return;
+
+      const overCard = e.target.closest(".card");
+      if (!overCard || overCard === dragging) return;
+
+      const rect = overCard.getBoundingClientRect();
+      const before = (e.clientY - rect.top) < rect.height / 2;
+      overCard.classList.add("drag-over");
+      if (before) {
+        grid.insertBefore(dragging, overCard);
+      } else {
+        grid.insertBefore(dragging, overCard.nextSibling);
+      }
+    });
+
+    grid.addEventListener("dragleave", (e) => {
+      const c = e.target.closest(".card");
+      if (c) c.classList.remove("drag-over");
+    });
+
+    grid.addEventListener("drop", (e) => {
+      e.preventDefault();
+      grid.querySelectorAll(".drag-over").forEach(el => el.classList.remove("drag-over"));
+      saveOrder();
+    });
+
+    grid.addEventListener("dragstart", (e) => {
+      const isHandle = e.target.matches("[data-handle]");
+      if (!isHandle) e.preventDefault();
+    });
+  }
+
+  // === Refresh + Countdown =================================================
+  function startCountdown() {
+    stopCountdown();
+    countdownMs = REFRESH_MS;
+    tickCountdown();
+    countdownTimer = setInterval(() => {
+      countdownMs -= 1000;
+      if (countdownMs <= 0) {
+        refreshNow(false);
+      } else {
+        tickCountdown();
+      }
+    }, 1000);
+  }
+  function stopCountdown(){ if (countdownTimer){ clearInterval(countdownTimer); countdownTimer = null; } }
+  function tickCountdown(){
+    const total = Math.max(0, Math.floor(countdownMs/1000));
+    const mm = Math.floor(total/60), ss = total%60;
+    countdownEl.textContent = `${pad2(mm)}:${pad2(ss)}`;
+  }
+  async function refreshNow(_manual){
+    stopCountdown();
+    await loadAll();
+    startCountdown();
+  }
+
+  // === Boot ================================================================
+  (async () => {
+    try {
+      // Build grid immediately (use saved order)
+      const frag = document.createDocumentFragment();
+      const order = loadOrder();
+      const keys = PAIRS.map(([b,q]) => cardKey(b,q));
+      const orderedKeys = order && order.every(k => keys.includes(k)) ? order : keys;
+      const map = new Map(PAIRS.map(p => [cardKey(...p), p]));
+      for (const k of orderedKeys) {
+        const pair = map.get(k);
+        if (pair) frag.appendChild(buildCard(...pair));
+      }
+      grid.appendChild(frag);
+      enableDragAndDrop();
+    } catch (_e) {}
+
+    await loadAll();
+    startCountdown();
+  })();
+})();
+</script>
+</body>
+</html>
